@@ -7,6 +7,35 @@ find_terms_in_model <- function(model, variables = NULL) {
     UseMethod("find_terms_in_model")
 }
 
+find_terms_in_model.DirichletRegModel <- function(model, variables = NULL) {
+  classes <- sapply(model$data, class)
+  classes <- classes[!(names(classes) %in% c(model$varnames, "Y"))]
+  
+  # identify factors versus numeric terms in `model`, and examine only unique terms
+  vars <- list(
+    nnames = unique(names(classes)[!classes %in% c("factor", "ordered", "logical")]),
+    lnames = unique(names(classes)[classes == "logical"]),
+    fnames = unique(names(classes)[classes %in% c("factor", "ordered")])
+  )
+  
+  # subset of variables for which to compute the marginal effects
+  if (!is.null(variables)) {
+    tmp <- c(vars$nnames, vars$lnames, vars$fnames)
+    if (any(!variables %in% tmp)) {
+      stop("Some values in 'variables' are not in the model terms.")
+    }
+    vars$nnames <- vars$nnames[vars$nnames %in% variables]
+    vars$lnames <- vars$lnames[vars$lnames %in% variables]
+    vars$fnames <- vars$fnames[vars$fnames %in% variables]
+  }
+  
+  # check whether the list is completely NULL
+  if (is.null(unlist(vars))) {
+    stop("No variables found in model.")
+  }
+  return(vars)
+}
+
 find_terms_in_model.default <- function(model, variables = NULL) {
     
     # identify classes of terms in `model`
