@@ -121,9 +121,10 @@ function(data,
     
     if (!is.null(type)) {
         type <- type[1L]
-        pred <- prediction(model = model, data = data.table::rbindlist(list(d0, d1)), type = type, calculate_se = FALSE, ...)[["fitted"]]
+        # Fix for DitrichletReg Class data.frame
+        pred <- prediction(model = model, data = rbind(d0, d1), type = type, calculate_se = FALSE, ...)[["fitted"]]
     } else {
-        pred <- prediction(model = model, data = data.table::rbindlist(list(d0, d1)), calculate_se = FALSE, ...)[["fitted"]]
+        pred <- prediction(model = model, data = rbind(d0, d1), calculate_se = FALSE, ...)[["fitted"]]
     }
     
     if (change == "dydx") {
@@ -181,18 +182,22 @@ function(data,
     d0[[variable]] <- base
     if (!is.null(type)) {
         type <- type[1L]
-        pred0 <- prediction(model = model, data = d0, type = type, calculate_se = FALSE, ...)[["fitted"]]
+        pred0 <- prediction(model = model, data = rbind(d0,d1), type = type, calculate_se = FALSE, ...)[["fitted"]]
+        pred0 <- pred0[seq_len(nrow(d0))] # fix issue in predict function from DirichletReg 
     } else {
-        pred0 <- prediction(model = model, data = d0, calculate_se = FALSE, ...)[["fitted"]]
+        pred0 <- prediction(model = model, data = rbind(d0,d1), calculate_se = FALSE, ...)[["fitted"]]
+        pred0 <- pred0[seq_len(nrow(d0))] # fix issue in predict function from DirichletReg 
     }
     # calculate difference for each factor level
     for (i in seq_along(levs)) {
         d1[[variable]] <- levs[i]
         if (!is.null(type)) {
             type <- type[1L]
-            pred1 <- prediction(model = model, data = d1, type = type, calculate_se = FALSE, ...)[["fitted"]]
+            pred1 <- prediction(model = model, data = rbind(d1,d0), type = type, calculate_se = FALSE, ...)[["fitted"]]
+            pred1 <- pred1[seq_len(nrow(d1))] # fix issue in predict function from DirichletReg 
         } else {
-            pred1 <- prediction(model = model, data = d1, calculate_se = FALSE, ...)[["fitted"]]
+            pred1 <- prediction(model = model, data = rbind(d1,d0), calculate_se = FALSE, ...)[["fitted"]]
+            pred1 <- pred1[seq_len(nrow(d1))] # fix issue in predict function from DirichletReg 
         }
         if (isTRUE(as.data.frame)) {
             out[[outcolnames[i]]] <- structure(pred1 - pred0, class = c("marginaleffect", "numeric"))
