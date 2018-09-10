@@ -1,3 +1,26 @@
+# margins 0.3.25
+
+* Setup a `cplot.default()` method and modified documentation of `cplot()`, `image()`, and `persp()` methods slightly. (#84, h/t Luke Sonnet)
+* Improve the documentation the behavior of `cplot()` for generalized linear models, which can generate unexpected confidence intervals (albeit ones consistent with base R's behavior). (#92)
+
+# margins 0.3.24
+
+* Added new function `margins_summary()` which provides a single-function expression of `summary(margins(...))`. (#94, h/t Mike DeCrescenzo)
+* Added variances of marginal effects to "polr" objects from **MASS**. (#98, @eijoac)
+* Fix a bug in `persp()` related to attempting to take the mean of a factor variable. (#93, h/t Jared Knowles)
+
+# margins 0.3.23
+
+* Fix a small issue in `print()` and `summary()` methods related to the release of prediction 0.3.6.
+
+# margins 0.3.22
+
+* Expanded support for objects of class "merMod" from **lme4**, including support for variance estimation and an expanded test suite. (#56)
+
+# margins 0.3.21
+
+* Modified the internals of `gradient_factory()` to be more robust to an expanded set of model classes through the introduction of an internal function `reset_coefs()`. A test suite for this function has been added.
+
 # margins 0.3.20
 
 * Added support for objects of class "ivreg" from **AER**.
@@ -19,6 +42,7 @@
 * Updated examples in `README.Rmd`. (#83)
 
 # margins 0.3.16
+>>>>>>> master
 
 * Fixed a bug in `cplot()` when `xvar` was of class "ordered". (#77, h/t Francisco Llaneras)
 * Fixed a bug in `plot.margins()` when `at` contained only one variable. (#78, h/t @cyberbryce)
